@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,3 +38,25 @@ Route::get('cart/trash',
 
 Route::post('cart/update/{producto}',
 ['as'=>'cart-update', 'uses'=>'HomeController@update']);
+
+//Validación
+Route::get('validar', function(Request $request){
+  $valor = $request->cookie('lang');
+  App::setLocale($valor);
+  return view ('validar');
+});
+
+
+Route::post('validar', 'HomeController@postValidar');
+
+App::setLocale("en");
+
+Route::post('cambiar', function(Request $request){
+  request()->validate([
+    'lan' => 'required'
+  ]);
+  $lenguaje = $request->input("lan");
+  App::setLocale("en");
+  return redirect('validar')
+  ->withCookie(cookie('lang', $request->input('lan'), 60 * 24 * 365));
+});

@@ -68,11 +68,37 @@ class HomeController extends Controller
       $cart = \Session::get('cart');
       $total = 0;
       foreach ($cart as $item) {
-        // code...
         $total+= $item->price * $item->quantity;
       }
 
       return $total;
+    }
+
+
+    public function postValidar(Request $request)
+    {
+      request()->validate([
+        'nombre' => 'required',
+        'correo' => ['required', 'email'],
+        'imagen' => 'required',
+        'fecha'  => 'required'
+      ], [
+        'nombre.required'=>__('I need your name')
+      ]);
+      $msg = "Todo en orden";
+
+      return view('validar', array( 'msg'=>$msg ));
+
+    }
+
+    public function postCambiar(Request $request)
+    {
+          $this->validate($request, [
+		        'lan' => 'required'
+    	    ]);
+          App::setLocale($request->input("lan"));
+          return redirect('validar')
+          ->withCookie(cookie('lang', $request->input('lan'), 60 * 24 * 365));
     }
 
 }
